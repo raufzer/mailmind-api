@@ -10,9 +10,10 @@ import (
 )
 
 type UserInfo struct {
-	ID    string `json:"sub"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	ID       string `json:"sub"`
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	ImageURL string `json:"picture"`
 }
 
 func FetchGoogleUserInfo(oauthConfig *oauth2.Config, token *oauth2.Token) (UserInfo, error) {

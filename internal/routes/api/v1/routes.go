@@ -12,13 +12,12 @@ func RegisterRoutes(
 	router *gin.Engine,
 	authController *controllers.AuthController,
 	userController *controllers.UserController,
-	systemController *controllers.SystemController,
 	appConfig *config.AppConfig,
 ) {
 
 	basePath := router.Group("/v1")
 
-	RegisterPublicRoutes(basePath, authController, systemController)
+	RegisterPublicRoutes(basePath, authController)
 
 	protected := basePath.Group("/")
 	protected.Use(middlewares.AuthMiddleware(appConfig))
@@ -31,10 +30,8 @@ func RegisterRoutes(
 func RegisterPublicRoutes(
 	router *gin.RouterGroup,
 	authController *controllers.AuthController,
-	systemController *controllers.SystemController,
 ) {
 	AuthRoutes(router, authController)
-	SystemRoutes(router, systemController)
 }
 
 func RegisterProtectedRoutes(
