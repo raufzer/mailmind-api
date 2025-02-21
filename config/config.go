@@ -16,9 +16,7 @@ type AppConfig struct {
 	RedisURI            string
 	RedisPassword       string
 	AccessTokenSecret   string
-	RefreshTokenSecret  string
 	AccessTokenMaxAge   time.Duration
-	RefreshTokenMaxAge  time.Duration
 	GoogleClientID      string
 	GoogleClientSecret  string
 	GoogleRedirectURL   string
@@ -40,9 +38,7 @@ func LoadConfig() (*AppConfig, error) {
 		RedisURI:            getEnvOrFatal("REDIS_URI", "string").(string),
 		RedisPassword:       getEnvOrFatal("REDIS_PASSWORD", "string").(string),
 		AccessTokenSecret:   getEnvOrFatal("ACCESS_TOKEN_SECRET", "string").(string),
-		RefreshTokenSecret:  getEnvOrFatal("REFRESH_TOKEN_SECRET", "string").(string),
 		AccessTokenMaxAge:   getEnvOrFatal("ACCESS_TOKEN_MAX_AGE", "duration").(time.Duration),
-		RefreshTokenMaxAge:  getEnvOrFatal("REFRESH_TOKEN_MAX_AGE", "duration").(time.Duration),
 		GoogleClientID:      getEnvOrFatal("GOOGLE_CLIENT_ID", "string").(string),
 		GoogleClientSecret:  getEnvOrFatal("GOOGLE_CLIENT_SECRET", "string").(string),
 		GoogleRedirectURL:   getEnvOrFatal("GOOGLE_REDIRECT_URL", "string").(string),

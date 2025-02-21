@@ -11,6 +11,5 @@ func AuthRoutes(rg *gin.RouterGroup, authController *controllers.AuthController)
 	authRoute.GET("/connect", authController.GoogleConnect)
 	authRoute.GET("/callback", authController.GoogleCallbackConnect)
 	authRoute.POST("/logout", authController.Logout)
-	authRoute.POST("/refresh-token", authController.RefreshToken)
 
 }

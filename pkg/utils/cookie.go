@@ -8,6 +8,11 @@ import (
 )
 
 func SetAuthCookie(ctx *gin.Context, tokenName string, token string, maxAge time.Duration, domain string, isProduction bool) {
+	sameSite := http.SameSiteLaxMode
+	if isProduction {
+		sameSite = http.SameSiteNoneMode
+	}
+
 	cookie := &http.Cookie{
 		Name:     tokenName,
 		Value:    token,
@@ -16,7 +21,7 @@ func SetAuthCookie(ctx *gin.Context, tokenName string, token string, maxAge time
 		MaxAge:   int(maxAge.Seconds()),
 		Secure:   isProduction,
 		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode,
+		SameSite: sameSite,
 	}
 
 	http.SetCookie(ctx.Writer, cookie)

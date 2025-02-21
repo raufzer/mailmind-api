@@ -10,8 +10,6 @@ import (
 
 type TokenClaims struct {
 	ID      string `json:"sub"`
-	Role    string `json:"role"`
-	Purpose string `json:"purpose"`
 	jwt.StandardClaims
 }
 
@@ -24,12 +22,11 @@ func GenerateToken(userID string, ttl time.Duration, purpose string, secretJWTKe
 	if !ok {
 		return "", fmt.Errorf("invalid token claims format")
 	}
-	claims["sub"] = userID // email for reset_token
+	claims["sub"] = userID
 	claims["exp"] = now.Add(ttl).Unix()
 	claims["iat"] = now.Unix()
 	claims["nbf"] = now.Unix()
 	claims["jti"] = fmt.Sprintf("%d-%x", now.UnixNano(), generateRandomBytes(16))
-	claims["purpose"] = purpose
 
 	tokenString, err := token.SignedString([]byte(secretJWTKey))
 	if err != nil {
@@ -38,7 +35,7 @@ func GenerateToken(userID string, ttl time.Duration, purpose string, secretJWTKe
 
 	return tokenString, nil
 }
-func ValidateToken(tokenString string, secretKey string, expectedPurpose string) (*TokenClaims, error) {
+func ValidateToken(tokenString string, secretKey string) (*TokenClaims, error) {
 
 	token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -51,12 +48,6 @@ func ValidateToken(tokenString string, secretKey string, expectedPurpose string)
 		return nil, fmt.Errorf("invalid token: %w", err)
 	}
 
-	if claims, ok := token.Claims.(*TokenClaims); ok {
-		if claims.Purpose != expectedPurpose {
-			return nil, fmt.Errorf("token purpose mismatch")
-		}
-		return claims, nil
-	}
 
 	return nil, fmt.Errorf("invalid token claims")
 }

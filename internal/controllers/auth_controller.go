@@ -24,44 +24,14 @@ func NewAuthController(service serviceInterfaces.AuthService, config *config.App
 	}
 }
 
-func (c *AuthController) RefreshToken(ctx *gin.Context) {
-	refreshToken, err := ctx.Cookie("refresh_token")
-	if err != nil {
-		_ = ctx.Error(err)
-		ctx.Abort()
-		return
-	}
-	userID, err := c.authService.ValidateToken(ctx, refreshToken)
-	if err != nil {
-		_ = ctx.Error(err)
-		ctx.Abort()
-		return
-	}
-
-	accessToken, err := c.authService.RefreshAccessToken(ctx, userID, refreshToken)
-	if err != nil {
-		_ = ctx.Error(err)
-		ctx.Abort()
-		return
-	}
-
-	isProduction := c.config.ServerPort != "9090"
-	utils.SetAuthCookie(ctx, "access_token", accessToken, c.config.AccessTokenMaxAge, c.config.BackEndDomain, isProduction)
-	ctx.JSON(http.StatusOK, response.Response{
-		Code:    http.StatusOK,
-		Status:  "OK",
-		Message: "Access token refreshed successfully!",
-	})
-}
-
 func (c *AuthController) Logout(ctx *gin.Context) {
-	refreshToken, err := ctx.Cookie("refresh_token")
+	acesss_token, err := ctx.Cookie("acesss_token")
 	if err != nil {
 		_ = ctx.Error(err)
 		ctx.Abort()
 		return
 	}
-	userID, err := c.authService.ValidateToken(ctx, refreshToken)
+	userID, err := c.authService.ValidateToken(ctx, acesss_token)
 	if err != nil {
 		_ = ctx.Error(err)
 		ctx.Abort()
@@ -74,7 +44,6 @@ func (c *AuthController) Logout(ctx *gin.Context) {
 	}
 	isProduction := c.config.ServerPort != "9090"
 	utils.SetAuthCookie(ctx, "access_token", "", -1, c.config.BackEndDomain, isProduction)
-	utils.SetAuthCookie(ctx, "refresh_token", "", -1, c.config.BackEndDomain, isProduction)
 
 	ctx.JSON(http.StatusOK, response.Response{
 		Code:    http.StatusOK,
@@ -84,8 +53,6 @@ func (c *AuthController) Logout(ctx *gin.Context) {
 }
 
 func (c *AuthController) GoogleConnect(ctx *gin.Context) {
-	role := "user"
-	ctx.SetCookie("role", role, 3600, "/", c.config.BackEndDomain, false, true)
 	oauthConfig := integrations.InitializeGoogleOAuthConfig(c.config.GoogleClientID, c.config.GoogleClientSecret, c.config.GoogleRedirectURL)
 
 	authURL := oauthConfig.AuthCodeURL("", oauth2.AccessTypeOffline)
@@ -94,16 +61,6 @@ func (c *AuthController) GoogleConnect(ctx *gin.Context) {
 }
 
 func (c *AuthController) GoogleCallbackConnect(ctx *gin.Context) {
-	role, err := ctx.Cookie("role")
-	if err != nil || role == "" {
-		ctx.JSON(http.StatusBadRequest, response.Response{
-			Code:    http.StatusBadRequest,
-			Status:  "Bad Request",
-			Message: "Role is missing or expired",
-		})
-		return
-	}
-
 	code := ctx.DefaultQuery("code", "")
 
 	if code == "" {
@@ -115,7 +72,7 @@ func (c *AuthController) GoogleCallbackConnect(ctx *gin.Context) {
 		return
 	}
 
-	user, accessToken, refreshToken, connect, err := c.authService.GoogleConnect(ctx, code)
+	user, accessToken, connect, err := c.authService.GoogleConnect(ctx, code)
 	if err != nil {
 		_ = ctx.Error(err)
 		ctx.Abort()
@@ -130,8 +87,8 @@ func (c *AuthController) GoogleCallbackConnect(ctx *gin.Context) {
 		})
 	} else if connect == "login" {
 		isProduction := c.config.ServerPort != "9090"
+		ctx.SetCookie("acess_token", accessToken, 3600, "/", c.config.BackEndDomain, false, true)
 		utils.SetAuthCookie(ctx, "access_token", accessToken, c.config.AccessTokenMaxAge, c.config.BackEndDomain, isProduction)
-		utils.SetAuthCookie(ctx, "refresh_token", refreshToken, c.config.RefreshTokenMaxAge, c.config.BackEndDomain, isProduction)
 		ctx.JSON(http.StatusOK, response.Response{
 			Code:    http.StatusOK,
 			Status:  "OK",

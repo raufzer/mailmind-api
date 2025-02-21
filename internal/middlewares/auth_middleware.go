@@ -18,7 +18,7 @@ func AuthMiddleware(config *config.AppConfig) gin.HandlerFunc {
 			return
 		}
 
-		claims, err := utils.ValidateToken(accessToken, config.AccessTokenSecret, "access")
+		claims, err := utils.ValidateToken(accessToken, config.AccessTokenSecret)
 		if err != nil {
 			_ = ctx.Error(utils.NewCustomError(http.StatusUnauthorized, "Invalid or expired access token"))
 			ctx.Abort()
@@ -26,13 +26,6 @@ func AuthMiddleware(config *config.AppConfig) gin.HandlerFunc {
 		}
 
 		ctx.Set("user_id", claims.ID)
-		ctx.Set("role", claims.Role)
-		ctx.Set("purpose", claims.Purpose)
-		if claims.Role == "candidate" {
-			ctx.Set("candidate_id", claims.ID)
-		} else if claims.Role == "recruiter" {
-			ctx.Set("recruiter_id", claims.ID)
-		}
 		ctx.Next()
 	}
 }
