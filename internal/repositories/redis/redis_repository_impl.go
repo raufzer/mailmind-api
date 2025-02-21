@@ -21,33 +21,6 @@ func NewRedisRepository(redisClient *redis.Client) repositoryInterfaces.RedisRep
 	}
 }
 
-func (r *RedisRepository) StoreOTP(email, otp string, expiry time.Duration) error {
-	key := fmt.Sprintf("otp:%s", email)
-	if err := r.redisClient.Set(context.Background(), key, otp, expiry).Err(); err != nil {
-		return fmt.Errorf("redis: failed to store OTP for email %s: %w", email, err)
-	}
-	return nil
-}
-
-func (r *RedisRepository) GetOTP(email string) (string, error) {
-	key := fmt.Sprintf("otp:%s", email)
-	result, err := r.redisClient.Get(context.Background(), key).Result()
-	if err != nil {
-		if err == redis.Nil {
-			return "", redis.Nil
-		}
-		return "", fmt.Errorf("redis: failed to get OTP for email %s: %w", email, err)
-	}
-	return result, nil
-}
-
-func (r *RedisRepository) InvalidateOTP(email string) error {
-	key := fmt.Sprintf("otp:%s", email)
-	if err := r.redisClient.Del(context.Background(), key).Err(); err != nil {
-		return fmt.Errorf("redis: failed to delete OTP for email %s: %w", email, err)
-	}
-	return nil
-}
 
 func (r *RedisRepository) StoreResetToken(email, token string, expiry time.Duration) error {
 	key := fmt.Sprintf("reset_token:%s", email)

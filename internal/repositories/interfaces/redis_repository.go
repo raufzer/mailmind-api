@@ -6,9 +6,6 @@ import (
 )
 
 type RedisRepository interface {
-	StoreOTP(email, otp string, expiry time.Duration) error
-	GetOTP(email string) (string, error)
-	InvalidateOTP(email string) error
 	StoreResetToken(email, token string, expiry time.Duration) error
 	GetResetToken(email string) (string, error)
 	InvalidateResetToken(email string) error

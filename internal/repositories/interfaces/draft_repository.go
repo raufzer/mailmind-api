@@ -6,6 +6,6 @@ import (
 
 )
 type DraftRepository interface {
-	SaveDraft(ctx context.Context, draft *models.Draft) error
+	CreateDraft(ctx context.Context, draft *models.Draft) error
 	GetDraftByID(ctx context.Context, draftID string) (*models.Draft, error)
 }

@@ -7,6 +7,6 @@ import (
 )
 
 type EmailRepository interface {
-	SaveEmail(ctx context.Context, email *models.Email) error
+	CreateEmail(ctx context.Context, email *models.Email) error
 	GetEmailByID(ctx context.Context, emailID string) (*models.Email, error)
 }

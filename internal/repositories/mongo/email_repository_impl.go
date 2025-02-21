@@ -17,13 +17,16 @@ func NewEmailRepository(db *mongo.Database) interfaces.EmailRepository {
 	return &EmailRepositoryMongo{collection: db.Collection("emails")}
 }
 
-func (r *EmailRepositoryMongo) SaveEmail(ctx context.Context, email *models.Email) error {
+func (r *EmailRepositoryMongo) CreateEmail(ctx context.Context, email *models.Email) error {
 	_, err := r.collection.InsertOne(ctx, email)
 	return err
 }
 
 func (r *EmailRepositoryMongo) GetEmailByID(ctx context.Context, emailID string) (*models.Email, error) {
 	var email models.Email
-	err := r.collection.FindOne(ctx, bson.M{"id": emailID}).Decode(&email)
-	return &email, err
+	err := r.collection.FindOne(ctx, bson.M{"_id": emailID}).Decode(&email)
+	if err != nil {
+		return nil, err
+	}
+	return &email, nil
 }

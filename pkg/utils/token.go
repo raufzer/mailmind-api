@@ -15,7 +15,7 @@ type TokenClaims struct {
 	jwt.StandardClaims
 }
 
-func GenerateToken(userID string, ttl time.Duration, purpose string, role string, secretJWTKey string) (string, error) {
+func GenerateToken(userID string, ttl time.Duration, purpose string, secretJWTKey string) (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS256)
 	now := time.Now().UTC()
@@ -30,10 +30,6 @@ func GenerateToken(userID string, ttl time.Duration, purpose string, role string
 	claims["nbf"] = now.Unix()
 	claims["jti"] = fmt.Sprintf("%d-%x", now.UnixNano(), generateRandomBytes(16))
 	claims["purpose"] = purpose
-
-	if purpose == "access" && role != "" {
-		claims["role"] = role
-	}
 
 	tokenString, err := token.SignedString([]byte(secretJWTKey))
 	if err != nil {
