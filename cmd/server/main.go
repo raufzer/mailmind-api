@@ -29,7 +29,6 @@ func main() {
 		server,
 		deps.AuthController,
 		deps.UserController,
-		deps.SystemController,
 		appConfig,
 	)
 
