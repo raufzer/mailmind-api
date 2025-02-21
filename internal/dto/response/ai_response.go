@@ -7,6 +7,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+type GeminiAPIResponse struct {
+	Text string `json:"text"`
+}
 type AIResponse struct {
 	ID             primitive.ObjectID `json:"id"`
 	EmailID        primitive.ObjectID `json:"email_id"`

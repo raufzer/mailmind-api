@@ -7,6 +7,7 @@ type GenerateReplyRequest struct {
 	Content string             `json:"content" binding:"required"`
 }
 
-type SummarizeEmailRequest struct {
-	EmailID string `json:"email_id" binding:"required"`
+type GeminiAPIRequest struct {
+	Prompt string `json:"prompt"`
 }
+

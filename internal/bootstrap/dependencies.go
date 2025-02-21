@@ -8,18 +8,20 @@ import (
 	"mailmind-api/internal/repositories/redis"
 	"mailmind-api/internal/services"
 	"mailmind-api/pkg/utils"
+
+	"go.uber.org/zap"
 )
 
 type AppDependencies struct {
 	AuthController *controllers.AuthController
-
-	RedisClient *config.RedisConfig
+	AIController   *controllers.AIController
+	RedisClient    *config.RedisConfig
 }
 
 func InitializeDependencies(cfg *config.AppConfig) (*AppDependencies, error) {
 	// Initialize MongoDB
 	dbConfig := config.ConnectDatabase(cfg)
-
+	db := dbConfig.Client.Database(cfg.DatabaseName)
 	// Initialize Redis
 	redisConfig := config.ConnectRedis(cfg)
 
@@ -30,21 +32,22 @@ func InitializeDependencies(cfg *config.AppConfig) (*AppDependencies, error) {
 	integrations.InitCloudinary(cfg)
 
 	// Initialize Repositories
-	userRepo := mongodb.NewUserRepository(dbConfig.Client.Database(cfg.DatabaseName))
+	userRepo := mongodb.NewUserRepository(db)
+	aiRepo := mongodb.NewAIResponseRepository(db)
 	redisRepo := redis.NewRedisRepository(redisConfig.Client)
 
 	// Initialize Services
 	authService := services.NewAuthService(userRepo, redisRepo, cfg)
-	// userService := services.NewUserService(userRepo)
+	aiService := services.NewAIService(aiRepo, cfg, &zap.Logger{})
 
 	// Initialize Controllers
-	// userController := controllers.NewUserController(userService)
 	authController := controllers.NewAuthController(authService, cfg)
+	aiCotnroller := controllers.NewAIController(aiService)
 
 	// Return dependencies
 	return &AppDependencies{
-		// UserController: userController,
 		AuthController: authController,
+		AIController:   aiCotnroller,
 		RedisClient:    redisConfig,
 	}, nil
 }

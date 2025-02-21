@@ -28,6 +28,7 @@ func main() {
 	v1.RegisterRoutes(
 		server,
 		deps.AuthController,
+		deps.AIController,
 		appConfig,
 	)
 

@@ -6,27 +6,31 @@ import (
 	"mailmind-api/internal/repositories/interfaces"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type AIResponseRepositoryMongo struct {
+type AIResponseRepository struct {
 	collection *mongo.Collection
+	ctx        context.Context
 }
 
 func NewAIResponseRepository(db *mongo.Database) interfaces.AIResponseRepository {
-	return &AIResponseRepositoryMongo{collection: db.Collection("ai_responses")}
+	return &AIResponseRepository{
+		collection: db.Collection("ai_responses"),
+	}
 }
 
-func (r *AIResponseRepositoryMongo) CreateAIResponse(ctx context.Context, response *models.AIResponse) error {
-	_, err := r.collection.InsertOne(ctx, response)
+func (r *AIResponseRepository) SaveResponse(ctx context.Context, aiResponse *models.AIResponse) error {
+	_, err := r.collection.InsertOne(ctx, aiResponse)
 	return err
 }
 
-func (r *AIResponseRepositoryMongo) GetAIResponseByEmailID(ctx context.Context, emailID string) (*models.AIResponse, error) {
-	var response models.AIResponse
-	err := r.collection.FindOne(ctx, bson.M{"email_id": emailID}).Decode(&response)
+func (r *AIResponseRepository) GetResponseByEmailID(ctx context.Context, emailID primitive.ObjectID) (*models.AIResponse, error) {
+	var aiResponse models.AIResponse
+	err := r.collection.FindOne(ctx, bson.M{"email_id": emailID}).Decode(&aiResponse)
 	if err != nil {
 		return nil, err
 	}
-	return &response, nil
+	return &aiResponse, nil
 }
