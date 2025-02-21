@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	ID           primitive.ObjectID `bson:"_id,omitempty"`
-	GoogleID     primitive.ObjectID `bson:"google_id"`
+	GoogleID     string             `bson:"google_id"`
 	ProfileImage string             `bson:"profile_image"`
 	Email        string             `bson:"email"`
 	Name         string             `bson:"name"`

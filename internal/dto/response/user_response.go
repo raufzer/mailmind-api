@@ -8,7 +8,7 @@ import (
 
 type UserResponse struct {
 	ID       primitive.ObjectID   `json:"id"`
-	GoogleID primitive.ObjectID   `json:"google_id"`
+	GoogleID string               `json:"google_id"`
 	Email    string               `json:"email"`
 	Name     string               `json:"name"`
 	Settings UserSettingsResponse `json:"settings"`
