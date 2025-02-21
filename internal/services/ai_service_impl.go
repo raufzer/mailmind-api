@@ -9,6 +9,7 @@ import (
 	"mailmind-api/internal/integrations"
 	"mailmind-api/internal/models"
 	"mailmind-api/internal/repositories/interfaces"
+	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -27,7 +28,7 @@ func NewAIService(aiRepo interfaces.AIResponseRepository, config *config.AppConf
 		aiRepo:    aiRepo,
 		config:    config,
 		logger:    logger,
-		semaphore: make(chan struct{}, config.AIConcurrencyLimit), // Buffered channel for concurrency control
+		semaphore: make(chan struct{}, 10), // Buffered channel for concurrency control
 	}
 }
 
@@ -53,7 +54,12 @@ func (s *AIService) GenerateReply(ctx context.Context, req request.GenerateReply
 	// Generate reply with retries
 	var generatedReply string
 	var genErr error
-	for attempt := 1; attempt <= s.config.AIMaxRetries; attempt++ {
+	AIMaxRetriesStr := s.config.AIMaxRetries
+	AIMaxRetries, err := strconv.Atoi(AIMaxRetriesStr)
+	if err != nil {
+		return nil, fmt.Errorf("invalid AI max retries value: %w", err)
+	}
+	for attempt := 1; attempt <= AIMaxRetries; attempt++ {
 		generatedReply, genErr = integrations.CallGeminiAPI(req.Content, s.config.GeminiAPIKey)
 		if genErr == nil {
 			break

@@ -24,9 +24,9 @@ type AppConfig struct {
 	CloudinaryCloudName string
 	CloudinaryAPIKey    string
 	CloudinaryAPISecret string
-	AIMaxRetries        int
-	AITimeoutSeconds    int
-	AIConcurrencyLimit  int
+	AIMaxRetries        string
+	AITimeoutSeconds    time.Duration
+	AIConcurrencyLimit  string
 }
 
 func LoadConfig() (*AppConfig, error) {
@@ -50,9 +50,9 @@ func LoadConfig() (*AppConfig, error) {
 		CloudinaryCloudName: getEnvOrFatal("CLOUDINARY_CLOUD_NAME", "string").(string),
 		CloudinaryAPIKey:    getEnvOrFatal("CLOUDINARY_API_KEY", "string").(string),
 		CloudinaryAPISecret: getEnvOrFatal("CLOUDINARY_API_SECRET", "string").(string),
-		AIMaxRetries:        getEnvOrFatal("AI_MAX_RETRIES", "int").(int),
-		AITimeoutSeconds:    getEnvOrFatal("AI_TIMEOUT", "int").(int),
-		AIConcurrencyLimit:  getEnvOrFatal("AI_MAX_CONCURRENCY", "int").(int),
+		AIMaxRetries:        getEnvOrFatal("AI_MAX_RETRIES", "string").(string),
+		AITimeoutSeconds:    getEnvOrFatal("AI_TIMEOUT", "duration").(time.Duration),
+		AIConcurrencyLimit:  getEnvOrFatal("AI_MAX_CONCURRENCY", "string").(string),
 	}
 	return config, nil
 }
