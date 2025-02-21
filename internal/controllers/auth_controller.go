@@ -25,23 +25,6 @@ func NewAuthController(service serviceInterfaces.AuthService, config *config.App
 }
 
 func (c *AuthController) Logout(ctx *gin.Context) {
-	acesss_token, err := ctx.Cookie("acesss_token")
-	if err != nil {
-		_ = ctx.Error(err)
-		ctx.Abort()
-		return
-	}
-	userID, err := c.authService.ValidateToken(ctx, acesss_token)
-	if err != nil {
-		_ = ctx.Error(err)
-		ctx.Abort()
-		return
-	}
-	if err := c.authService.Logout(ctx, userID); err != nil {
-		_ = ctx.Error(err)
-		ctx.Abort()
-		return
-	}
 	isProduction := c.config.ServerPort != "9090"
 	utils.SetAuthCookie(ctx, "access_token", "", -1, c.config.BackEndDomain, isProduction)
 
@@ -95,7 +78,6 @@ func (c *AuthController) GoogleCallbackConnect(ctx *gin.Context) {
 			Message: "Successfully logged in!",
 			Data:    response.ToUserResponse(user),
 		})
-		
 
 	}
 }

@@ -9,7 +9,6 @@ import (
 	"mailmind-api/pkg/utils"
 	"net/http"
 
-	"github.com/go-redis/redis/v8"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -27,33 +26,7 @@ func NewAuthService(userRepo interfaces.UserRepository, redisRepo interfaces.Red
 	}
 }
 
-func (s *AuthService) RefreshAccessToken(ctx context.Context, userID, refreshToken string) (string, error) {
-	storedToken, err := s.redisRepository.GetRefreshToken(ctx, userID)
-	if err != nil {
-		if err == redis.Nil {
-			return "", utils.NewCustomError(http.StatusUnauthorized, "Refresh token expired or not found")
-		}
-		return "", utils.NewCustomError(http.StatusInternalServerError, "Failed to retrieve refresh token")
-	}
-	if storedToken != refreshToken {
-		return "", utils.NewCustomError(http.StatusUnauthorized, "Invalid Token")
-	}
 
-	accessToken, err := utils.GenerateToken(userID, s.config.AccessTokenMaxAge, "access", s.config.AccessTokenSecret)
-	if err != nil {
-		return "", utils.NewCustomError(http.StatusInternalServerError, "Failed to generate access token")
-	}
-
-	return accessToken, nil
-}
-
-func (s *AuthService) Logout(ctx context.Context, userID string) error {
-	err := s.redisRepository.InvalidateRefreshToken(ctx, userID)
-	if err != nil {
-		return utils.NewCustomError(http.StatusInternalServerError, "Failed to delete refresh token")
-	}
-	return nil
-}
 func (s *AuthService) ValidateToken(ctx context.Context, token string) (string, error) {
 	claims, err := utils.ValidateToken(token, s.config.AccessTokenSecret)
 	if err != nil {
