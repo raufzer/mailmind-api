@@ -70,7 +70,6 @@ func (c *AuthController) GoogleCallbackConnect(ctx *gin.Context) {
 		})
 	} else if connect == "login" {
 		isProduction := c.config.ServerPort != "9090"
-		ctx.SetCookie("acess_token", accessToken, 3600, "/", c.config.BackEndDomain, false, true)
 		utils.SetAuthCookie(ctx, "access_token", accessToken, c.config.AccessTokenMaxAge, c.config.BackEndDomain, isProduction)
 		ctx.JSON(http.StatusOK, response.Response{
 			Code:    http.StatusOK,
