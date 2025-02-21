@@ -11,7 +11,6 @@ import (
 func RegisterRoutes(
 	router *gin.Engine,
 	authController *controllers.AuthController,
-	userController *controllers.UserController,
 	appConfig *config.AppConfig,
 ) {
 
@@ -21,10 +20,10 @@ func RegisterRoutes(
 
 	protected := basePath.Group("/")
 	protected.Use(middlewares.AuthMiddleware(appConfig))
-	RegisterProtectedRoutes(
-		protected,
-		userController,
-	)
+	// RegisterProtectedRoutes(
+	// 	protected,
+	// 	userController,
+	// )
 }
 
 func RegisterPublicRoutes(
@@ -34,19 +33,19 @@ func RegisterPublicRoutes(
 	AuthRoutes(router, authController)
 }
 
-func RegisterProtectedRoutes(
-	router *gin.RouterGroup,
-	userController *controllers.UserController,
-) {
+// func RegisterProtectedRoutes(
+// 	router *gin.RouterGroup,
+// 	userController *controllers.UserController,
+// ) {
 
-	userGroup := router.Group("/user")
-	userGroup.Use(middlewares.RoleMiddleware("user"))
-	RegisterUserRoutes(userGroup, userController)
-}
+// 	userGroup := router.Group("/user")
+// 	userGroup.Use(middlewares.RoleMiddleware("user"))
+// 	RegisterUserRoutes(userGroup, userController)
+// }
 
-func RegisterUserRoutes(
-	router *gin.RouterGroup,
-	userController *controllers.UserController,
-) {
-	UserRoutes(router, userController)
-}
+// func RegisterUserRoutes(
+// 	router *gin.RouterGroup,
+// 	userController *controllers.UserController,
+// ) {
+// 	UserRoutes(router, userController)
+// }
