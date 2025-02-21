@@ -95,6 +95,7 @@ func (c *AuthController) GoogleCallbackConnect(ctx *gin.Context) {
 			Message: "Successfully logged in!",
 			Data:    response.ToUserResponse(user),
 		})
+		
 
 	}
 }
