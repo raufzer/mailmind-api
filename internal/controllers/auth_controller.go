@@ -84,7 +84,7 @@ func (c *AuthController) Logout(ctx *gin.Context) {
 }
 
 func (c *AuthController) GoogleConnect(ctx *gin.Context) {
-	role := "default"
+	role := "user"
 	ctx.SetCookie("role", role, 3600, "/", c.config.BackEndDomain, false, true)
 	oauthConfig := integrations.InitializeGoogleOAuthConfig(c.config.GoogleClientID, c.config.GoogleClientSecret, c.config.GoogleRedirectURL)
 

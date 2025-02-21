@@ -39,20 +39,14 @@ func RegisterProtectedRoutes(
 	userController *controllers.UserController,
 ) {
 
-	adminGroup := router.Group("/admin")
-	adminGroup.Use(middlewares.RoleMiddleware("admin"))
-	RegisterAdminRoutes(adminGroup, userController)
-}
-
-func RegisterAdminRoutes(
-	router *gin.RouterGroup,
-	userController *controllers.UserController,
-) {
-	UserRoutes(router, userController)
+	userGroup := router.Group("/user")
+	userGroup.Use(middlewares.RoleMiddleware("user"))
+	RegisterUserRoutes(userGroup, userController)
 }
 
 func RegisterUserRoutes(
 	router *gin.RouterGroup,
+	userController *controllers.UserController,
 ) {
-
+	UserRoutes(router, userController)
 }
