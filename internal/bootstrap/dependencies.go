@@ -11,7 +11,6 @@ import (
 )
 
 type AppDependencies struct {
-	UserController *controllers.UserController
 	AuthController *controllers.AuthController
 
 	RedisClient *config.RedisConfig
