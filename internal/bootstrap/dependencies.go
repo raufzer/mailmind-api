@@ -4,22 +4,22 @@ import (
 	"mailmind-api/config"
 	"mailmind-api/internal/controllers"
 	"mailmind-api/internal/integrations"
-	"mailmind-api/internal/repositories/mongo"
+	mongodb "mailmind-api/internal/repositories/mongo"
 	"mailmind-api/internal/repositories/redis"
 	"mailmind-api/internal/services"
 	"mailmind-api/pkg/utils"
 )
 
 type AppDependencies struct {
-	UserController           *controllers.UserController
-	AuthController           *controllers.AuthController
-	RedisClient              *config.RedisConfig
-	SystemController         *controllers.SystemController
+	UserController *controllers.UserController
+	AuthController *controllers.AuthController
+
+	RedisClient *config.RedisConfig
 }
 
 func InitializeDependencies(cfg *config.AppConfig) (*AppDependencies, error) {
-	// Initialize Mongo Database
-	dbConfig := config.ConnectDB()
+	// Initialize MongoDB
+	dbConfig := config.ConnectDatabase(cfg)
 
 	// Initialize Redis
 	redisConfig := config.ConnectRedis(cfg)
@@ -31,27 +31,21 @@ func InitializeDependencies(cfg *config.AppConfig) (*AppDependencies, error) {
 	integrations.InitCloudinary(cfg)
 
 	// Initialize Repositories
-	userRepo := postgresql.NewUserRepository(dbConfig.DB)
+	userRepo := mongodb.NewUserRepository(dbConfig.Client.Database(cfg.DatabaseName))
 	redisRepo := redis.NewRedisRepository(redisConfig.Client)
 
 	// Initialize Services
-	authService := services.NewAuthService(
-		userRepo,
-		redisRepo,
-		cfg,
-	)
-	userService := services.NewUserService(userRepo)
+	authService := services.NewAuthService(userRepo, redisRepo, cfg)
+	// userService := services.NewUserService(userRepo)
 
 	// Initialize Controllers
-	userController := controllers.NewUserController(userService)
+	// userController := controllers.NewUserController(userService)
 	authController := controllers.NewAuthController(authService, cfg)
-	systemController := controllers.NewSystemController(cfg, dbConfig, redisConfig)
 
 	// Return dependencies
 	return &AppDependencies{
-		UserController:           userController,
-		AuthController:           authController,
-		RedisClient:              redisConfig,
-		SystemController:         systemController,
+		// UserController: userController,
+		AuthController: authController,
+		RedisClient:    redisConfig,
 	}, nil
 }

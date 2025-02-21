@@ -3,7 +3,6 @@ package bootstrap
 import (
 	"mailmind-api/config"
 	"mailmind-api/internal/middlewares"
-	v1 "mailmind-api/internal/routes/api/v1"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +13,7 @@ func CreateServer(appConfig *config.AppConfig) *gin.Engine {
 	server := gin.Default()
 
 	// CORS setup
-	server.Use(config.SetupCORS(appConfig.FrontEndDomain, appConfig.BackEndDomain))
+	server.Use(config.SetupCORS(appConfig.BackEndDomain))
 
 	// Global middleware
 	server.Use(gin.Recovery())
