@@ -1,16 +1,19 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type User struct {
-	ID           string       `bson:"_id,omitempty" json:"id"`
-	GoogleID     string       `bson:"google_id" json:"google_id"`
-	Email        string       `bson:"email" json:"email"`
-	Name         string       `bson:"name" json:"name"`
-	AccessToken  string       `bson:"access_token" json:"-"`
-	RefreshToken string       `bson:"refresh_token" json:"-"`
-	TokenExpiry  time.Time    `bson:"token_expiry" json:"-"`
-	Settings     UserSettings `bson:"settings" json:"settings"`
+	ID           primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	GoogleID     string             `bson:"google_id" json:"google_id"`
+	ProfileImage string             `bson:"profile_image" json:"profile_image"`
+	Email        string             `bson:"email" json:"email"`
+	Name         string             `bson:"name" json:"name"`
+	TokenExpiry  time.Time          `bson:"token_expiry" json:"-"`
+	Settings     UserSettings       `bson:"settings" json:"settings"`
 }
 
 type UserSettings struct {
