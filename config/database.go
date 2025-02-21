@@ -7,11 +7,13 @@ import (
 	"github.com/go-redis/redis/v8"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
 type RedisConfig struct {
 	Client *redis.Client
 }
+
 
 func ConnectRedis(config *AppConfig) *RedisConfig {
 
@@ -33,28 +35,32 @@ func ConnectRedis(config *AppConfig) *RedisConfig {
 		Client: client,
 	}
 }
-
-var DB *mongo.Database
-
-func ConnectDB() {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017") 
-	client, err := mongo.Connect(context.TODO(), clientOptions)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Check the connection
-	err = client.Ping(context.TODO(), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	log.Println("Connected to MongoDB!")
-
-	DB = client.Database("mailmind") // Set your database name
+type DatabaseConfig struct {
+	Client         *mongo.Client
+	UserCollection *mongo.Collection
+	Ctx            context.Context
 }
 
-func GetCollection(collectionName string) *mongo.Collection {
-	return DB.Collection(collectionName)
+func ConnectDatabase(config *AppConfig) *DatabaseConfig {
+	ctx := context.TODO()
+
+	clientOptions := options.Client().ApplyURI(config.DatabaseURI)
+
+	client, err := mongo.Connect(ctx, clientOptions)
+	if err != nil {
+		log.Fatal("Error while connecting to MongoDB: ", err)
+	}
+
+	err = client.Ping(ctx, readpref.Primary())
+	if err != nil {
+		log.Fatal("Error while pinging MongoDB: ", err)
+	}
+
+	log.Println("Connected to MongoDB successfully")
+
+	return &DatabaseConfig{
+		Client:         client,
+		UserCollection: client.Database("userdb").Collection("users"),
+		Ctx:            ctx,
+	}
 }
