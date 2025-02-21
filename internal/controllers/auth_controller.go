@@ -31,14 +31,14 @@ func (c *AuthController) RefreshToken(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
-	userID, err := c.authService.ValidateToken(ctx,refreshToken)
+	userID, err := c.authService.ValidateToken(ctx, refreshToken)
 	if err != nil {
 		_ = ctx.Error(err)
 		ctx.Abort()
 		return
 	}
 
-	accessToken, err := c.authService.RefreshAccessToken(ctx,userID, refreshToken)
+	accessToken, err := c.authService.RefreshAccessToken(ctx, userID, refreshToken)
 	if err != nil {
 		_ = ctx.Error(err)
 		ctx.Abort()
@@ -61,8 +61,13 @@ func (c *AuthController) Logout(ctx *gin.Context) {
 		ctx.Abort()
 		return
 	}
-	userID,  _ := c.authService.ValidateToken(ctx,refreshToken)
-	if err := c.authService.Logout(ctx,userID); err != nil {
+	userID, err := c.authService.ValidateToken(ctx, refreshToken)
+	if err != nil {
+		_ = ctx.Error(err)
+		ctx.Abort()
+		return
+	}
+	if err := c.authService.Logout(ctx, userID); err != nil {
 		_ = ctx.Error(err)
 		ctx.Abort()
 		return
@@ -110,7 +115,7 @@ func (c *AuthController) GoogleCallbackConnect(ctx *gin.Context) {
 		return
 	}
 
-	user, accessToken, refreshToken, connect, err := c.authService.GoogleConnect(ctx,code)
+	user, accessToken, refreshToken, connect, err := c.authService.GoogleConnect(ctx, code)
 	if err != nil {
 		_ = ctx.Error(err)
 		ctx.Abort()
