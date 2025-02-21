@@ -3,14 +3,16 @@ package response
 import (
 	"mailmind-api/internal/models"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type DraftResponse struct {
-	ID        string    `json:"id"`
-	Recipient string    `json:"recipient"`
-	Subject   string    `json:"subject"`
-	Body      string    `json:"body"`
-	CreatedAt time.Time `json:"created_at"`
+	ID        primitive.ObjectID `json:"id"`
+	Recipient string             `json:"recipient"`
+	Subject   string             `json:"subject"`
+	Body      string             `json:"body"`
+	CreatedAt time.Time          `json:"created_at"`
 }
 
 func ToDraftResponse(draft *models.Draft) DraftResponse {

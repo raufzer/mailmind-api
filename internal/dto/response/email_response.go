@@ -3,17 +3,18 @@ package response
 import (
 	"mailmind-api/internal/models"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type EmailResponse struct {
-	ID         string    `json:"id"`
-	EmailID    string    `json:"email_id"`
-	Sender     string    `json:"sender"`
-	Recipient  string    `json:"recipient"`
-	Subject    string    `json:"subject"`
-	Body       string    `json:"body"`
-	IsRead     bool      `json:"is_read"`
-	ReceivedAt time.Time `json:"received_at"`
+	ID         primitive.ObjectID `json:"id"`
+	EmailID    primitive.ObjectID `json:"email_id"`
+	Sender     string             `json:"sender"`
+	Recipient  string             `json:"recipient"`
+	Subject    string             `json:"subject"`
+	Body       string             `json:"body"`
+	ReceivedAt time.Time          `json:"received_at"`
 }
 
 func ToEmailResponse(email *models.Email) EmailResponse {
@@ -24,7 +25,6 @@ func ToEmailResponse(email *models.Email) EmailResponse {
 		Recipient:  email.Recipient,
 		Subject:    email.Subject,
 		Body:       email.Body,
-		IsRead:     email.IsRead,
 		ReceivedAt: email.ReceivedAt,
 	}
 }
