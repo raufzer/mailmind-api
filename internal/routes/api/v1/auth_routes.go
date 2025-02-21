@@ -8,9 +8,9 @@ import (
 
 func AuthRoutes(rg *gin.RouterGroup, authController *controllers.AuthController) {
 	authRoute := rg.Group("/auth")
+	authRoute.GET("/connect", authController.GoogleConnect)
+	authRoute.GET("/callback", authController.GoogleCallbackConnect)
 	authRoute.POST("/logout", authController.Logout)
 	authRoute.POST("/refresh-token", authController.RefreshToken)
-	authRoute.GET("/google/connect", authController.GoogleConnect)
-	authRoute.GET("/google/callback", authController.GoogleCallbackConnect)
 
 }
