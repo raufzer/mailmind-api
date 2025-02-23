@@ -12,6 +12,7 @@ func RegisterRoutes(
 	router *gin.Engine,
 	authController *controllers.AuthController,
 	aiController *controllers.AIController,
+	emailController *controllers.EmailController,
 	appConfig *config.AppConfig,
 ) {
 
@@ -24,6 +25,7 @@ func RegisterRoutes(
 	RegisterProtectedRoutes(
 		protected,
 		aiController,
+		emailController,
 	)
 }
 
@@ -37,6 +39,9 @@ func RegisterPublicRoutes(
 func RegisterProtectedRoutes(
 	router *gin.RouterGroup,
 	aiController *controllers.AIController,
+	emailController *controllers.EmailController,
 ) {
 	AIRoutes(router, aiController)
+	EmailRoutes(router, emailController)
+
 }
