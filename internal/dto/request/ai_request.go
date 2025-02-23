@@ -1,13 +1,24 @@
 package request
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type GenerateReplyRequest struct {
-	EmailID primitive.ObjectID `json:"email_id" binding:"required"`
 	Content string             `json:"content" binding:"required"`
 }
 
 type GeminiAPIRequest struct {
-	Prompt string `json:"prompt"`
+	Contents []struct {
+		Parts []struct {
+			Text string `json:"text"`
+		} `json:"parts"`
+	} `json:"contents"`
 }
 
+type GeminiAPIResponse struct {
+	Candidates []struct {
+		Content struct {
+			Parts []struct {
+				Text string `json:"text"`
+			} `json:"parts"`
+		} `json:"content"`
+	} `json:"candidates"`
+}
