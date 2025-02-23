@@ -9,11 +9,11 @@ import (
 )
 
 type TokenClaims struct {
-	ID      string `json:"sub"`
+	ID       string `json:"sub"`
 	jwt.StandardClaims
 }
 
-func GenerateToken(userID string, ttl time.Duration, purpose string, secretJWTKey string) (string, error) {
+func GenerateToken(userID string,ttl time.Duration, secretJWTKey string) (string, error) {
 
 	token := jwt.New(jwt.SigningMethodHS256)
 	now := time.Now().UTC()
@@ -36,20 +36,22 @@ func GenerateToken(userID string, ttl time.Duration, purpose string, secretJWTKe
 	return tokenString, nil
 }
 func ValidateToken(tokenString string, secretKey string) (*TokenClaims, error) {
+    token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+        if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+            return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+        }
+        return []byte(secretKey), nil
+    })
 
-	token, err := jwt.ParseWithClaims(tokenString, &TokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(secretKey), nil
-	})
+    if err != nil {
+        return nil, fmt.Errorf("invalid token: %w", err)
+    }
 
-	if err != nil || !token.Valid {
-		return nil, fmt.Errorf("invalid token: %w", err)
-	}
+    if claims, ok := token.Claims.(*TokenClaims); ok && token.Valid {
+        return claims, nil
+    }
 
-
-	return nil, fmt.Errorf("invalid token claims")
+    return nil, fmt.Errorf("invalid token claims")
 }
 
 func GenerateSecureOTP(length int) string {
