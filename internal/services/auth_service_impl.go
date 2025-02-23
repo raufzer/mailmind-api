@@ -13,24 +13,21 @@ import (
 )
 
 type AuthService struct {
-	userRepository  interfaces.UserRepository
-	redisRepository interfaces.RedisRepository
-	config          *config.AppConfig
+	userRepository interfaces.UserRepository
+	config         *config.AppConfig
 }
 
-func NewAuthService(userRepo interfaces.UserRepository, redisRepo interfaces.RedisRepository, config *config.AppConfig) *AuthService {
+func NewAuthService(userRepo interfaces.UserRepository, config *config.AppConfig) *AuthService {
 	return &AuthService{
-		userRepository:  userRepo,
-		redisRepository: redisRepo,
-		config:          config,
+		userRepository: userRepo,
+		config:         config,
 	}
 }
-
 
 func (s *AuthService) ValidateToken(ctx context.Context, token string) (string, error) {
 	claims, err := utils.ValidateToken(token, s.config.AccessTokenSecret)
 	if err != nil {
-		return "", utils.NewCustomError(http.StatusUnauthorized, "Invalid or expired token")
+		return "",utils.NewCustomError(http.StatusUnauthorized, "Invalid or expired token")
 	}
 	return claims.ID, nil
 }
@@ -63,16 +60,15 @@ func (s *AuthService) GoogleConnect(ctx context.Context, code string) (*models.U
 			return nil, "", "", utils.NewCustomError(http.StatusInternalServerError, "Failed to create user")
 		}
 
-		accessToken, err := utils.GenerateToken(newUser.ID.Hex(), s.config.AccessTokenMaxAge, "access", s.config.AccessTokenSecret)
+		accessToken, err := utils.GenerateToken(newUser.ID.Hex(), s.config.AccessTokenMaxAge, s.config.AccessTokenSecret)
 		if err != nil {
 			return nil, "", "", utils.NewCustomError(http.StatusInternalServerError, "Failed to generate access token")
 		}
 
-
 		return newUser, accessToken, "register", nil
 	}
 
-	accessToken, err := utils.GenerateToken(existingUser.ID.Hex(), s.config.AccessTokenMaxAge, "access", s.config.AccessTokenSecret)
+	accessToken, err := utils.GenerateToken(existingUser.ID.Hex(), s.config.AccessTokenMaxAge, s.config.AccessTokenSecret)
 	if err != nil {
 		return nil, "", "", utils.NewCustomError(http.StatusInternalServerError, "Failed to generate access token")
 	}
