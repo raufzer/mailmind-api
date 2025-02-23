@@ -17,38 +17,26 @@ func RegisterRoutes(
 
 	basePath := router.Group("/v1")
 
-	RegisterPublicRoutes(basePath, authController, aiController)
+	RegisterPublicRoutes(basePath, authController)
 
 	protected := basePath.Group("/")
 	protected.Use(middlewares.AuthMiddleware(appConfig))
-	// RegisterProtectedRoutes(
-	// 	protected,
-	// 	userController,
-	// )
+	RegisterProtectedRoutes(
+		protected,
+		aiController,
+	)
 }
 
 func RegisterPublicRoutes(
 	router *gin.RouterGroup,
 	authController *controllers.AuthController,
-	aiController *controllers.AIController,
 ) {
 	AuthRoutes(router, authController)
-	AIRoutes(router, aiController)
 }
 
-// func RegisterProtectedRoutes(
-// 	router *gin.RouterGroup,
-// 	userController *controllers.UserController,
-// ) {
-
-// 	userGroup := router.Group("/user")
-// 	userGroup.Use(middlewares.RoleMiddleware("user"))
-// 	RegisterUserRoutes(userGroup, userController)
-// }
-
-// func RegisterUserRoutes(
-// 	router *gin.RouterGroup,
-// 	userController *controllers.UserController,
-// ) {
-// 	UserRoutes(router, userController)
-// }
+func RegisterProtectedRoutes(
+	router *gin.RouterGroup,
+	aiController *controllers.AIController,
+) {
+	AIRoutes(router, aiController)
+}
