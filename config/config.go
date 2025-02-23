@@ -13,20 +13,12 @@ type AppConfig struct {
 	ServerPort          string
 	DatabaseURI         string
 	DatabaseName        string
-	RedisURI            string
-	RedisPassword       string
 	AccessTokenSecret   string
 	AccessTokenMaxAge   time.Duration
 	GoogleClientID      string
 	GoogleClientSecret  string
 	GoogleRedirectURL   string
 	GeminiAPIKey        string
-	CloudinaryCloudName string
-	CloudinaryAPIKey    string
-	CloudinaryAPISecret string
-	AIMaxRetries        string
-	AITimeoutSeconds    time.Duration
-	AIConcurrencyLimit  string
 }
 
 func LoadConfig() (*AppConfig, error) {
@@ -39,20 +31,12 @@ func LoadConfig() (*AppConfig, error) {
 		ServerPort:         getEnvOrFatal("SERVER_PORT", "string").(string),
 		DatabaseURI:        getEnvOrFatal("DATABASE_URI", "string").(string),
 		DatabaseName:       getEnvOrFatal("DATABASE_NAME", "string").(string),
-		RedisURI:           getEnvOrFatal("REDIS_URI", "string").(string),
-		RedisPassword:      getEnvOrFatal("REDIS_PASSWORD", "string").(string),
 		AccessTokenSecret:  getEnvOrFatal("ACCESS_TOKEN_SECRET", "string").(string),
 		AccessTokenMaxAge:  getEnvOrFatal("ACCESS_TOKEN_MAX_AGE", "duration").(time.Duration),
 		GoogleClientID:     getEnvOrFatal("GOOGLE_CLIENT_ID", "string").(string),
 		GoogleClientSecret: getEnvOrFatal("GOOGLE_CLIENT_SECRET", "string").(string),
 		GoogleRedirectURL:  getEnvOrFatal("GOOGLE_REDIRECT_URL", "string").(string),
 		GeminiAPIKey:       getEnvOrFatal("GEMINI_API_KEY", "string").(string),
-		CloudinaryCloudName: getEnvOrFatal("CLOUDINARY_CLOUD_NAME", "string").(string),
-		CloudinaryAPIKey:    getEnvOrFatal("CLOUDINARY_API_KEY", "string").(string),
-		CloudinaryAPISecret: getEnvOrFatal("CLOUDINARY_API_SECRET", "string").(string),
-		AIMaxRetries:        getEnvOrFatal("AI_MAX_RETRIES", "string").(string),
-		AITimeoutSeconds:    getEnvOrFatal("AI_TIMEOUT", "duration").(time.Duration),
-		AIConcurrencyLimit:  getEnvOrFatal("AI_MAX_CONCURRENCY", "string").(string),
 	}
 	return config, nil
 }
