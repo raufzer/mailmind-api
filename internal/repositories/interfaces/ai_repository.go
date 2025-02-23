@@ -8,6 +8,6 @@ import (
 )
 
 type AIResponseRepository interface {
-	SaveResponse(ctx context.Context, aiResponse *models.AIResponse) error
+	SaveResponse(ctx context.Context, response *models.AIResponse) error
 	GetResponseByEmailID(ctx context.Context, emailID primitive.ObjectID) (*models.AIResponse, error)
 }

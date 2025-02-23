@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+
 	"mailmind-api/internal/models"
 	"mailmind-api/internal/repositories/interfaces"
 
@@ -21,9 +22,17 @@ func NewAIResponseRepository(db *mongo.Database) interfaces.AIResponseRepository
 	}
 }
 
-func (r *AIResponseRepository) SaveResponse(ctx context.Context, aiResponse *models.AIResponse) error {
-	_, err := r.collection.InsertOne(ctx, aiResponse)
-	return err
+func (r *AIResponseRepository) SaveResponse(ctx context.Context, response *models.AIResponse) error {
+
+	if response.ID.IsZero() {
+		response.ID = primitive.NewObjectID()
+	}
+
+	_, err := r.collection.InsertOne(ctx, response)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *AIResponseRepository) GetResponseByEmailID(ctx context.Context, emailID primitive.ObjectID) (*models.AIResponse, error) {
