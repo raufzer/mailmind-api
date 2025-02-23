@@ -8,7 +8,6 @@ import (
 
 type UserResponse struct {
 	ID       primitive.ObjectID   `json:"id"`
-	GoogleID string               `json:"google_id"`
 	Email    string               `json:"email"`
 	Name     string               `json:"name"`
 	Settings UserSettingsResponse `json:"settings"`
@@ -22,7 +21,6 @@ type UserSettingsResponse struct {
 func ToUserResponse(user *models.User) UserResponse {
 	return UserResponse{
 		ID:       user.ID,
-		GoogleID: user.GoogleID,
 		Email:    user.Email,
 		Name:     user.Name,
 		Settings: UserSettingsResponse{
