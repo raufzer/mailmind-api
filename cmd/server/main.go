@@ -29,6 +29,7 @@ func main() {
 		server,
 		deps.AuthController,
 		deps.AIController,
+		deps.EmailController,
 		appConfig,
 	)
 

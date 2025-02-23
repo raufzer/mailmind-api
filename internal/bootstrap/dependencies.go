@@ -10,6 +10,7 @@ import (
 type AppDependencies struct {
 	AuthController *controllers.AuthController
 	AIController   *controllers.AIController
+	EmailController *controllers.EmailController
 }
 
 func InitializeDependencies(cfg *config.AppConfig) (*AppDependencies, error) {
@@ -21,18 +22,23 @@ func InitializeDependencies(cfg *config.AppConfig) (*AppDependencies, error) {
 	// Initialize Repositories
 	userRepo := mongodb.NewUserRepository(db)
 	aiRepo := mongodb.NewAIResponseRepository(db)
+	emailRepo := mongodb.NewEmailRepository(db)
+	draftRepo := mongodb.NewDraftRepository(db)
 
 	// Initialize Services
 	authService := services.NewAuthService(userRepo, cfg)
 	aiService := services.NewAIService(aiRepo, cfg)
+	emailService := services.NewEmailService(emailRepo, draftRepo)
 
 	// Initialize Controllers
 	authController := controllers.NewAuthController(authService, cfg)
 	aiCotnroller := controllers.NewAIController(aiService)
+	emailcontroller := controllers.NewEmailController(emailService)
 
 	// Return dependencies
 	return &AppDependencies{
 		AuthController: authController,
 		AIController:   aiCotnroller,
+		EmailController: emailcontroller,
 	}, nil
 }
